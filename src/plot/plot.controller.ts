@@ -1,8 +1,8 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import { getRepository, Repository } from 'typeorm';
-import plotEntity from './plot.entity';
 import * as HttpStatus from 'http-status-codes';
+import Plot from './plot.entity';
 
 const routerOpts: Router.IRouterOptions = {
   prefix: '/plots',
@@ -11,8 +11,7 @@ const routerOpts: Router.IRouterOptions = {
 const router: Router = new Router(routerOpts);
 
 router.get('/', async (ctx: Koa.Context) => {
-  const plotRepo: Repository<plotEntity> = getPlotRepository();
-  const plots = await plotRepo.find();
+  const plots = await Plot.find();
 
   ctx.body = {
     data: [...plots],
@@ -20,8 +19,7 @@ router.get('/', async (ctx: Koa.Context) => {
 });
 
 router.get('/:plot_id', async (ctx: Koa.Context) => {
-  const plotRepo: Repository<plotEntity> = getPlotRepository();
-  const plot: plotEntity | undefined = await plotRepo.findOne(ctx.params.plot_id);
+  const plot: Plot | undefined = await Plot.findOne(ctx.params.plot_id);
 
   if (!plot) {
     ctx.throw(HttpStatus.NOT_FOUND);
@@ -33,11 +31,8 @@ router.get('/:plot_id', async (ctx: Koa.Context) => {
 });
 
 router.post('/', async (ctx:Koa.Context) => {
-  const plotRepo: Repository<plotEntity> = getPlotRepository();
-  console.log(ctx.request);
-
-  const plot: plotEntity[] = plotRepo.create(ctx.request.body);
-  await plotRepo.save(plot);
+  const plot: Plot = { ...ctx.request.body };
+  await plot.save();
 
   ctx.body = {
     data: { ...plot },
@@ -45,11 +40,10 @@ router.post('/', async (ctx:Koa.Context) => {
 });
 
 router.delete('/:plot_id', async (ctx:Koa.Context) => {
-  const plotRepo: Repository<plotEntity> = getPlotRepository();
-  const plot: plotEntity | undefined = await plotRepo.findOne(ctx.params.plot_id);
+  const plot: Plot | undefined = await Plot.findOne(ctx.params.plot_id);
 
   if (plot) {
-    await plotRepo.delete(plot);
+    await Plot.remove(plot);
     ctx.status = HttpStatus.NO_CONTENT;
   } else {
     ctx.throw(HttpStatus.NOT_FOUND);
@@ -58,12 +52,12 @@ router.delete('/:plot_id', async (ctx:Koa.Context) => {
 });
 
 router.patch('/:plot_id', async (ctx:Koa.Context) => {
-  const plotRepo: Repository<plotEntity> = getPlotRepository();
-  const plot: plotEntity | undefined = await plotRepo.findOne(ctx.params.plot_id);
+  const plot: Plot | undefined = await Plot.findOne(ctx.params.plot_id);
+  console.log(plot);
 
   if (plot) {
-    const updatedPlot = await plotRepo.merge(plot, ctx.request.body);
-    await plotRepo.save(updatedPlot);
+    const updatedPlot: Plot = Object.assign(plot, ctx.request.body);
+    await updatedPlot.save();
 
     ctx.body = {
       data: { ...updatedPlot },
@@ -72,9 +66,5 @@ router.patch('/:plot_id', async (ctx:Koa.Context) => {
     ctx.throw(HttpStatus.NOT_FOUND);
   }
 });
-
-function getPlotRepository(): Repository<plotEntity> {
-  return getRepository<plotEntity>(plotEntity);
-}
 
 export default router;
