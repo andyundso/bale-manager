@@ -1,5 +1,6 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
+import plotController from '../plot/plot.controller';
 
 const app: Koa = new Koa();
 
@@ -16,9 +17,8 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
 });
 
 // Initial route
-app.use(async (ctx: Koa.Context) => {
-  ctx.body = 'Hello world';
-});
+app.use(plotController.routes());
+app.use(plotController.allowedMethods());
 
 // Application error logging
 app.on('error', console.error);
