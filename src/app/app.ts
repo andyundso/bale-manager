@@ -1,5 +1,6 @@
 import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
+import * as bodyParser from 'koa-bodyparser';
 import plotController from '../plot/plot.controller';
 
 const app: Koa = new Koa();
@@ -17,6 +18,7 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
 });
 
 // Initial route
+app.use(bodyParser());
 app.use(plotController.routes());
 app.use(plotController.allowedMethods());
 
