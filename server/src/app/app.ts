@@ -21,6 +21,7 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
 app.use(bodyParser());
 app.use(plotController.routes());
 app.use(plotController.allowedMethods());
+app.use(require('koa-static')('./build'));
 
 // Application error logging
 app.on('error', console.error);
