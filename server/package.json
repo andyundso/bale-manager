@@ -23,7 +23,7 @@
   },
   "scripts": {
     "lint": "tslint --project tsconfig.json --format stylish",
-    "build": "yarn install && yarn run tsc",
+    "build": "yarn install && yarn list && yarn run tsc",
     "serve": "ts-node src/server.ts",
     "start": "nodemon",
     "tsc": "tsc"
