@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "cd frontend && yarn run build && cd ../server && yarn run build"
+  }
+}
