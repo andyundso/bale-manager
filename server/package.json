@@ -25,6 +25,7 @@
     "lint": "tslint --project tsconfig.json --format stylish",
     "build": "yarn install && tsc",
     "serve": "ts-node src/server.ts",
-    "start": "nodemon"
+    "start": "nodemon",
+    "tsc": "tsc"
   }
 }
